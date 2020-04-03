@@ -10,5 +10,6 @@ Also in your ~/.bashrc make sure you are sourcing the functions.sh script from t
 >"set -a; source /home/username/**_loc_of_new_flow_**/functions.sh; set +a"
 
 #### To start/setup calculations 
-To create a new flow use "$PFLOW/utils/setup_flow.sh _name_of_flow_"
+To create a new flow use $PFLOW/utils/setup_flow.sh _name_of_flow_
+
 To begin calculations use "$PFLOW/begin_calcs.sh" in the directory of the workflow 
