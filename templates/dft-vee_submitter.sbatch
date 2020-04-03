@@ -27,7 +27,7 @@ wait
 
 # submit S0 DFT optimization array (in solvent)
 cd $S0_SOLV
-#S0_DFT_OPT_SOLV_ID=$(submit_array "$TITLE\_S0_SOLV" g16_inp.txt com $FLOW_TOOLS/templates/array_g16_dft-opt.sbatch $DFT_TIME)
+S0_DFT_OPT_SOLV_ID=$(submit_array "$TITLE\_S0_SOLV" g16_inp.txt com $FLOW_TOOLS/templates/array_g16_dft-opt.sbatch $DFT_TIME)
 wait
 
 # submit single-point TD-DFT array (in solvent)
@@ -37,4 +37,4 @@ pwd
 wait
 
 # submit DFT submitter for all other DFT optimizations
-sed "s/S0_DFT_OPT_VAC_ID/$S0_DFT_OPT_VAC_ID/g" $FLOW_TOOLS/templates/dft-opt_submitter.sbatch | sbatch
+#sed "s/S0_DFT_OPT_VAC_ID/$S0_DFT_OPT_VAC_ID/g" $FLOW_TOOLS/templates/dft-opt_submitter.sbatch | sbatch

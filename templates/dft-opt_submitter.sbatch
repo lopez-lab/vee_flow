@@ -25,7 +25,7 @@ gen_slurm_report
 
 # submit S0 DFT optimization array (in solvent)
 cd $S0_SOLV
-S0_DFT_OPT_SOLV_ID=$(submit_array "$TITLE\_S0_SOLV" g16_inp.txt com $FLOW_TOOLS/templates/array_g16_dft-opt.sbatch $DFT_TIME)
+#S0_DFT_OPT_SOLV_ID=$(submit_array "$TITLE\_S0_SOLV" g16_inp.txt com $FLOW_TOOLS/templates/array_g16_dft-opt.sbatch $DFT_TIME)
 wait
 
 # submit S1 DFT optimization array (in solv)
