@@ -12,6 +12,6 @@ Also in your ~/.bashrc make sure you are sourcing the functions.sh script from t
 #### To start/setup calculations 
 Use "git clone https://github.com/lopez-lab/vee_flow.git" to copy the directory to your home directory 
 
-To create a new flow use "$PFLOW/utils/setup_flow.sh _name_of_flow_"
+To create a new flow use the setup_flow function "$PFLOW/utils/setup_flow.sh _name_of_flow_" in your scratch direcotry. This creates an instance of the workflow in your scratch directory where you can run active calculations but make sure the vee_flow code is still in your home directory. 
 
 To begin calculations use "$PFLOW/begin_calcs.sh" in the directory of the workflow 
