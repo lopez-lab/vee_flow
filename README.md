@@ -15,3 +15,6 @@ Use "git clone https://github.com/lopez-lab/vee_flow.git" to copy the directory 
 To create a new flow use the setup_flow function "$PFLOW/utils/setup_flow.sh _name_of_flow_" in your scratch direcotry. This creates an instance of the workflow in your scratch directory where you can run active calculations but make sure the vee_flow code is still in your home directory. 
 
 To begin calculations use "$PFLOW/begin_calcs.sh" in the directory of the workflow 
+
+#### To update workflow 
+In your home directory where vee_flow was cloned, use "git pull origin master" to update with changes. Note, this does not change the workflow you created in your scratch directory. 
