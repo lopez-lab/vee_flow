@@ -11,7 +11,9 @@ def get_prog(directory, num_mols, name, output_type=".log", dft=False, print=Tru
     if dft:
         failed_opt_dir = os.path.join(directory, "failed_opt")
         failed_freq_dir = os.path.join(directory, "failed_freq")
+        failed_tddft_dir = os.path.join(directory, "failed_tddft")
         resubmits_dir = os.path.join(directory, "resubmits")
+        tddft_dir = os.path.join(directory,"tddft")
         freq_calcs_dir = os.path.join(directory, "freq_calcs")
         freq_output = f"_freq{output_type}"
     else:
@@ -22,7 +24,8 @@ def get_prog(directory, num_mols, name, output_type=".log", dft=False, print=Tru
         num_resubmissions = get_num_files(resubmits_dir, output_type)
         num_running = (get_num_files(directory, output_type, last_modified=True) +
                        get_num_files(resubmits_dir, output_type, last_modified=True) +
-                       get_num_files(freq_calcs_dir, freq_output, last_modified=True))
+                       get_num_files(freq_calcs_dir, freq_output, last_modified=True) +
+			get_num_files(tddft_dir, output_type, last_modified=True))
 
     else:
         num_complete = get_num_files(completed_dir, output_type)
@@ -31,6 +34,7 @@ def get_prog(directory, num_mols, name, output_type=".log", dft=False, print=Tru
     if dft:
         num_failed_opt = get_num_files(failed_opt_dir, output_type)
         num_failed_freq = get_num_files(failed_freq_dir, output_type)
+        num_failed_tddft = get_num_files(failed_tddft_dir, output_type)
     else:
         num_failed_opt = get_num_files(failed_opt_dir, output_type)
 
@@ -48,7 +52,8 @@ def get_prog(directory, num_mols, name, output_type=".log", dft=False, print=Tru
                    num_resubmissions, num_mols),
                num_failed_opt, get_formatted_percentage(
                    num_failed_opt, num_mols),
-               num_failed_freq, get_formatted_percentage(num_failed_freq, num_mols)]
+               num_failed_freq, get_formatted_percentage(num_failed_freq, num_mols),
+               num_failed_tddft, get_formatted_percentage(num_failed_tddft, num_mols)]
     else:
         row = [name,
                num_complete, get_formatted_percentage(
@@ -60,12 +65,12 @@ def get_prog(directory, num_mols, name, output_type=".log", dft=False, print=Tru
                "    -------   ",
                num_failed_opt, get_formatted_percentage(
                    num_failed_opt, num_mols),
-               "    -------   "]
+               "    -------   ","    -------   "]
     if print:
         if dft:
-            print_format = "{: >20} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8}"
+            print_format = "{: >20} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8}"
         else:
-            print_format = "{: >20} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >13} {: >5} {: >8} {: >13}"
+            print_format = "{: >20} {: >5} {: >8} {: >5} {: >8} {: >5} {: >8} {: >13} {: >5} {: >8} {: >13} {: >13}"
         print_formatted(print_format, row)
 
 
@@ -110,8 +115,8 @@ def print_formatted(row_format, row):
 
 def print_header():
     header = ["", "completed", "incomplete", "running",
-              "resubmissions", "failed_opt", "failed_freq"]
-    header_format = "{: >20} {: >14} {: >14} {: >14} {: >14} {: >14} {: >14}"
+              "resubmissions", "failed_opt", "failed_freq", "failed_tddft"]
+    header_format = "{: >20} {: >14} {: >14} {: >14} {: >14} {: >14} {: >14} {: >14}"
     print_formatted(header_format, header)
 
 
@@ -141,17 +146,9 @@ if __name__ == "__main__":
         get_prog("pm7", num_confs, "PM7 opt")
         get_prog("rm1-d", num_confs, "RM1-D opt", output_type=".o")
         get_prog("sp-dft", num_confs, "SP-DFT")
-        get_prog("sp-tddft", num_unique_mols, "SP-TD-DFT")
         print("\n\t\t\t\t\t\t    DFT Optimization")
         print_header()
-        get_prog("s0_vac", num_unique_mols, "S0 (in vacuo)", dft=True)
         get_prog("s0_solv", num_unique_mols, "S0 (in MeCN)", dft=True)
-        get_prog("s1_solv", num_unique_mols, "S1 (in MeCN)", dft=True)
-        get_prog("t1_solv", num_unique_mols, "T1 (in MeCN)", dft=True)
-        get_prog("cat-rad_vac", num_unique_mols,
-                 "cat-rad (in vacuo)", dft=True)
-        get_prog("cat-rad_solv", num_unique_mols,
-                 "cat-rad (in MeCN)", dft=True)
         print()
     except:
         print("Error: Unable to find flow directory. Ensure that you are in a flow directory prior to running this script.")

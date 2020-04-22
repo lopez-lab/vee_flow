@@ -43,6 +43,7 @@ elif [ $termination -eq 1 ]; then               # if the run terminated successf
 	cd ../completed/
     to_all_logs $log
     setup_freq $log
+    setup_vee $log
     exit 0
 else
     # move files to failed directory

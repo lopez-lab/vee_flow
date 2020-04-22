@@ -22,7 +22,7 @@ pwd
 # submit S0 DFT optimization array (in vacuo)
 cd $S0_VAC
 pwd
-S0_DFT_OPT_VAC_ID=$(submit_array "$TITLE\_S0_VAC" "g16_inp.txt" "com" $FLOW_TOOLS/templates/array_g16_s0_dft-opt_vac.sbatch $DFT_TIME)
+#S0_DFT_OPT_VAC_ID=$(submit_array "$TITLE\_S0_VAC" "g16_inp.txt" "com" $FLOW_TOOLS/templates/array_g16_s0_dft-opt_vac.sbatch $DFT_TIME)
 wait
 
 # submit S0 DFT optimization array (in solvent)

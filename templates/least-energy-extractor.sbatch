@@ -40,10 +40,10 @@ for conf in $UNOPT_PDBS/*_0.pdb; do
 	charge=$(get_charge $inchi_key)	
 
 	# make single-point TD-DFT .com file and move to sp_td-dft directory
-	bash $FLOW_TOOLS/scripts/make-com.sh -i=$pdb -r='#p wB97XD/6-31+G(d,p) opt scrf=(iefpcm,solvent=acetonitrile)' -c=$charge -t=$name\_s0_solv -l=$S0_SOLV
+	bash $FLOW_TOOLS/scripts/make-com.sh -i=$pdb -r='#p M06/6-31+G(d,p) opt scrf=(iefpcm,solvent=acetonitrile)' -c=$charge -t=$name\_S0_SOLV -l=$S0_SOLV
 
     # make DFT S0 optimization .com file and move to dft_opt_s0 directory
-	bash $FLOW_TOOLS/scripts/make-com.sh -i=$pdb -r='#p M06/6-31+G(d,p) opt' -c=$charge -t=$name\_S0_vac -l=$S0_VAC
+#	bash $FLOW_TOOLS/scripts/make-com.sh -i=$pdb -r='#p M06/6-31+G(d,p) opt' -c=$charge -t=$name\_S0_vac -l=$S0_VAC
 	
 	echo $lowest >> $SP_DFT/lowest-energy-conformers.txt 
 	cd $SP_DFT/completed/
