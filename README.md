@@ -18,3 +18,6 @@ To begin calculations use "$PFLOW/begin_calcs.sh" in the directory of the workfl
 
 #### To update workflow 
 In your home directory where vee_flow was cloned, use "git pull origin master" to update with changes. Note, this does not change the workflow you created in your scratch directory. 
+
+#### Check workflow progress
+When in your scratch flow directory, run "check_prog" in the command line to see the progression of the calculations. 
