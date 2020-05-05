@@ -20,22 +20,23 @@ function source_config {
 function copy_opt_pdbs {
 	source_config
 	local curr_dir=$PWD
-    for d in "$S0_SOLV" "$S1_SOLV" "$T1_SOLV" "$CAT_RAD_VAC" "$CAT_RAD_SOLV"; do 
+    readarray -t sp_dft_opt < $SP_DFT/lowest-energy-conformers.txt
+    for d in "$S0_SOLV"; do 
 		if [[ "$curr_dir" == "$d" ]]; then
-			local opt_pdbs=$(for file in $S0_VAC/opt_pdbs/*.pdb; do base=$(basename $file); echo "${base/_S0_vac.pdb/}"; done)
-			local to_copy=$(for file in $opt_pdbs; do c=$(ls completed/$file* 2>/dev/null | wc -l); if [[ $c -eq 0 ]]; then echo $file; fi; done)
-			for file in $to_copy; do cp $S0_VAC/opt_pdbs/$file*.pdb $file.pdb; done
+			local unopt_pdbs=$(for file in ${sp_dft_opt[@]}; do echo "${file/_sp.log/.pdb}"; done)
+			#local to_copy=$(for file in $opt_pdbs; do c=$(ls completed/$file* 2>/dev/null | wc -l); if [[ $c -eq 0 ]]; then echo $file; fi; done)
+			for file in $unopt_pdbs; do cp $UNOPT_PDBS/$file.pdb $file.pdb; done
 			break
 		fi
 	done
 
-	if [[ "$curr_dir" == "$SP_DFT" ]]; then
-        local opt_pdbs=$(for file in $RM1_D/opt_pdbs/*.pdb; do base=$(basename $file); echo "${base:0:29}"; done | uniq)
-        local to_copy=$(for file in $opt_pdbs; do c=$(ls completed/$file* 2>/dev/null | wc -l); if [[ $c -eq 0 ]]; then echo $file; fi; done)
-        for file in $to_copy; do cp $RM1_D/opt_pdbs/$file*.pdb .; done
+	if [[ "$curr_dir" == "$T1_SOLV" ]]; then
+        local opt_logs=$(for file in $S0_SOLV/completed/*solv.log; do echo $file; done)
+        local to_copy=$(for file in $opt_logs; do c=$(ls completed/$file* 2>/dev/null | wc -l); if [[ $c -eq 0 ]]; then echo $file; fi; done)
+        for file in $to_copy; do cp $S0_SOLV/completed/$file .; done
     fi
 
-	if [[ "$curr_dir" == "$SP_TDDFT" ]]; then
+	if [[ "$curr_dir" == "$SP_DFT" ]]; then
         local opt_pdbs=$(for file in $RM1_D/opt_pdbs/*.pdb; do base=$(basename $file); echo "${base:0:29}"; done | uniq)
         local to_copy=$(for file in $opt_pdbs; do c=$(ls completed/$file* 2>/dev/null | wc -l); if [[ $c -eq 0 ]]; then echo $file; fi; done)
         for file in $to_copy; do cp $RM1_D/opt_pdbs/$file*.pdb .; done
@@ -333,7 +334,7 @@ function setup_vee {
         local charge=$(grep 'Charge =' $log_file | awk '{print $3}')
     local mult=$(grep 'Charge =' $log_file | awk '{print $6}')
         local vee="${log_file/.log/_tddft}"
-        local new_route=$(echo $route | sed "s|$opt_keyword|td=(singlets)|")
+        local new_route=$(echo $route | sed "s|$opt_keyword|td=(50-50)|")
 
         # setup freq job
         bash $FLOW_TOOLS/scripts/make-com.sh -i="$log_file" -r="$new_route" -c="$charge" -s="$mult" -t="$vee" -l="../tddft/"
@@ -439,11 +440,11 @@ function get_missing_input_files {
 	local curr_dir=$PWD
 	copy_opt_pdbs
     if [[ "$curr_dir" == "$S0_SOLV" ]]; then
-		for file in *.pdb; do inchi="${file/.pdb/}"; charge=$(get_charge $inchi_key); bash $PFLOW/scripts/make-com.sh -i=$file -r='#p M06/6-31+G(d,p) SCRF=(Solvent=Acetonitrile) opt' -t=$inchi\_S0_solv -c=$charge -l=$S0_SOLV -f; rm $file; done
+		for file in *.pdb; do inchi="$(echo $file | cut -d'_' -f1)"; charge=$(get_charge $inchi_key); bash $PFLOW/scripts/make-com.sh -i=$file -r='#p M06/6-31+G(d,p) SCRF=(Solvent=Acetonitrile) opt' -t=$inchi\_S0_solv -c=$charge -l=$S0_SOLV -f; rm $file; done
     elif [[ "$curr_dir" == "$S1_SOLV" ]]; then
-		for file in *.pdb; do inchi="${file/.pdb/}"; charge=$(get_charge $inchi_key); bash $PFLOW/scripts/make-com.sh -i=$file -r="#p M06/6-31+G(d,p) SCRF=(Solvent=Acetonitrile) opt td=root=1" -t=$inchi\_S1_solv -c=$charge -l=$S1_SOLV -f; rm $file; done
+		for file in *.log; do inchi="$(echo $file | cut -d'_' -f1)"; charge=$(get_charge $inchi_key); bash $PFLOW/scripts/make-com.sh -i=$file -r="#p M06/6-31+G(d,p) SCRF=(Solvent=Acetonitrile) opt td=root=1" -t=$inchi\_S1_solv -c=$charge -l=$S1_SOLV -f; rm $file; done
 	elif [[ "$curr_dir" == "$T1_SOLV" ]]; then
-		for file in *.pdb; do inchi="${file/.pdb/}"; charge=$(get_charge $inchi_key); bash $PFLOW/scripts/make-com.sh -i=$file -r='#p M06/6-31+G(d,p) SCRF=(Solvent=Acetonitrile) opt td=root=1' -s=3 -t=$inchi\_T1_solv -c=$charge -l=$T1_SOLV -f; rm $file; done
+		for file in *.log; do inchi="$(echo $file | cut -d'_' -f1)"; charge=$(get_charge $inchi_key); bash $PFLOW/scripts/make-com.sh -i=$file -r='#p M06/6-31+G(d,p) SCRF=(Solvent=Acetonitrile) opt td=root=1' -s=3 -t=$inchi\_T1_solv -c=$charge -l=$T1_SOLV -f; rm $file; done
     elif [[ "$curr_dir" == "$CAT_RAD_VAC" ]]; then
 		for file in *.pdb; do inchi="${file/.pdb/}"; charge=$(get_charge $inchi_key); bash $PFLOW/scripts/make-com.sh -i=$file -r='#p M06/6-31+G(d,p) opt' -t=$inchi\_cat-rad_vac -c=$(($charge + 1)) -s=2 -l=$CAT_RAD_VAC -f; rm $file; done
     elif [[ "$curr_dir" == "$CAT_RAD_SOLV" ]]; then
@@ -531,7 +532,7 @@ function restart_flow {
 # use: check_prog
 # effect: displays a table showing calculation progress for a workflow
 function check_prog {
-	bash $PFLOW/utils/check_prog.py
+	python $PFLOW/utils/check_prog.py
 }
 
 # creates workflow directory tree
