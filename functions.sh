@@ -23,7 +23,7 @@ function copy_opt_pdbs {
     readarray -t sp_dft_opt < $SP_DFT/lowest-energy-conformers.txt
     for d in "$S0_SOLV"; do 
 		if [[ "$curr_dir" == "$d" ]]; then
-			local unopt_pdbs=$(for file in ${sp_dft_opt[@]}; do echo "${file/_sp.log/.pdb}"; done)
+			local unopt_pdbs=$(for file in ${sp_dft_opt[@]}; do CUT=$(echo $file| cut -d'_' -f1); c=$(ls completed/$CUT* 2>/dev/null | wc -l); if [[ $c -eq 0 ]]; then echo "${file/_sp.log/.pdb}"; fi; done)
 			#local to_copy=$(for file in $opt_pdbs; do c=$(ls completed/$file* 2>/dev/null | wc -l); if [[ $c -eq 0 ]]; then echo $file; fi; done)
 			for file in $unopt_pdbs; do cp $UNOPT_PDBS/$file.pdb $file.pdb; done
 			break
