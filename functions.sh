@@ -33,7 +33,7 @@ function copy_opt_pdbs {
 	if [[ "$curr_dir" == "$T1_SOLV" ]]; then
         local opt_logs=$(for file in $S0_SOLV/completed/*solv.log; do echo $file; done)
         local to_copy=$(for file in $opt_logs; do c=$(ls completed/$file* 2>/dev/null | wc -l); if [[ $c -eq 0 ]]; then echo $file; fi; done)
-        for file in $to_copy; do cp $S0_SOLV/completed/$file .; done
+        for file in $to_copy; do cp $file .; done
     fi
 
 	if [[ "$curr_dir" == "$SP_DFT" ]]; then
@@ -280,6 +280,7 @@ function setup_sbatch {
 	sed -i "s/EMAIL/$DEFAULT_EMAIL/" "$batch_file" & wait
 }
 
+
 # determines if the job with the given title is finished
 function job_finished {
 	local output_file_name=$1
@@ -336,7 +337,7 @@ function setup_vee {
         local vee="${log_file/.log/_tddft}"
         local new_route=$(echo $route | sed "s|$opt_keyword|td=(50-50)|")
 
-        # setup freq job
+        # setup vee job
         bash $FLOW_TOOLS/scripts/make-com.sh -i="$log_file" -r="$new_route" -c="$charge" -s="$mult" -t="$vee" -l="../tddft/"
         cd "../tddft/"
 
