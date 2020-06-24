@@ -8,7 +8,7 @@ bashrc_source=~/.bashrc
 
 scratch_dir=/scratch/$USER
 
-utils_header='# VERDE Materials DB workflow utils'
+utils_header='# VERDE Materials DB Photo workflow utils'
 
 # ensure .bashrc exists and check if already modified
 if [ ! -f "$bashrc_source" ]; then
@@ -17,8 +17,9 @@ if [ ! -f "$bashrc_source" ]; then
 elif [ $(grep -c "$utils_header" "$bashrc_source") -ge 1 ]; then
 	echo ".bashrc already modified."
 else
-	FLOW=$(pwd)
-	echo -e "$utils_header\nexport SCRATCH=$scratch_dir\nexport FLOW=$FLOW\nset -a; source $FLOW/functions.sh; set +a\n" >> "$bashrc_source"
+	PFLOW=$(pwd)
+	echo -e "$utils_header\nexport SCRATCH=$scratch_dir\nexport PFLOW=$PFLOW\nset -a; source $PFLOW/functions.sh; set +a\n" >> "$bashrc_source"
+	echo -e "module load openbabel/2.4.1" >> "$bashrc_source"
 	echo "Successfully initialized VERDE workflow variables."
 fi
 
